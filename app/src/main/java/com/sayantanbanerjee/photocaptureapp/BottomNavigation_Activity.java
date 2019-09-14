@@ -2,12 +2,17 @@ package com.sayantanbanerjee.photocaptureapp;
 
 import android.os.Bundle;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.sayantanbanerjee.photocaptureapp.fragments.AboutMeFragment;
+import com.sayantanbanerjee.photocaptureapp.fragments.AllPhotosFragment;
+import com.sayantanbanerjee.photocaptureapp.fragments.HomePageFragment;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
 import android.view.MenuItem;
-import android.widget.TextView;
 
 public class BottomNavigation_Activity extends AppCompatActivity {
-    private TextView mTextMessage;
+    Fragment selectedFragment;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -16,16 +21,17 @@ public class BottomNavigation_Activity extends AppCompatActivity {
         public boolean onNavigationItemSelected(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
-                    return true;
+                    selectedFragment = new HomePageFragment();
+                    break;
                 case R.id.navigation_allphotos:
-                    mTextMessage.setText(R.string.title_allphotos);
-                    return true;
+                    selectedFragment = new AllPhotosFragment();
+                    break;
                 case R.id.navigation_aboutme:
-                    mTextMessage.setText(R.string.title_aboutme);
-                    return true;
+                    selectedFragment = new AboutMeFragment();
+                    break;
             }
-            return false;
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,selectedFragment).commit();
+            return true;
         }
     };
 
@@ -34,8 +40,8 @@ public class BottomNavigation_Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_navigation_);
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        mTextMessage = findViewById(R.id.message);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new HomePageFragment()).commit();
     }
 
 }

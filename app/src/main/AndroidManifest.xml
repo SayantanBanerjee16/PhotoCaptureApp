@@ -11,18 +11,16 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".BottomNavigation_Activity"
-            android:label="@string/title_activity_bottom_navigation_"></activity>
-        <activity
-            android:name=".BottomNavigationActivity"
-            android:label="@string/title_activity_bottom_navigation" />
+            android:label="Photo Capture App"
+            android:screenOrientation="portrait">>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
