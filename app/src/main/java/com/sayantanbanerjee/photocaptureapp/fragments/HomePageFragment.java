@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +58,8 @@ public class HomePageFragment extends Fragment {
     ImageView imageView;
     TextView textView;
     TextView textDisp;
+    TextView textView2;
+    ProgressBar progressBar;
     private static final String IMAGE_DIRECTORY = "/PhotoCaptureApp";
     private String pictureImagePath = "";
 
@@ -71,7 +74,11 @@ public class HomePageFragment extends Fragment {
         Button button = (Button) view.findViewById(R.id.captureButton);
         imageView = view.findViewById(R.id.photoPlaceholder);
         textView = view.findViewById(R.id.footer);
+        textView2 = view.findViewById(R.id.loading_view4);
         textDisp = view.findViewById(R.id.disp);
+        progressBar = view.findViewById(R.id.loading_view5);
+        textView2.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,6 +104,9 @@ public class HomePageFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
+                textDisp.setVisibility(View.INVISIBLE);
+                textView2.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.VISIBLE);
                 DownloadTask task = new DownloadTask();
                 task.execute();
             }
@@ -156,11 +166,13 @@ public class HomePageFragment extends Fragment {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
+            textView2.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
             if (imgFile.exists()) {
-
                 imageView.setImageBitmap(bitmap);
                 saveImage(bitmap);
             }
+
 
         }
 
@@ -192,7 +204,6 @@ public class HomePageFragment extends Fragment {
             fo.close();
             Log.d("TAG", "File Saved::---&gt;" + f.getAbsolutePath());
             textView.setText("No of PICTURES total captured by this App are: " + Integer.toString(val - 1));
-            textDisp.setVisibility(View.INVISIBLE);
             return f.getAbsolutePath();
         } catch (IOException e1) {
             e1.printStackTrace();
