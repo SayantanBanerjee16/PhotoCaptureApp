@@ -4,10 +4,13 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.sayantanbanerjee.photocaptureapp.MainActivity;
@@ -30,15 +34,21 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.net.URI;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
+import static android.app.Activity.RESULT_OK;
+import static android.content.ContentValues.TAG;
 import static android.media.MediaRecorder.VideoSource.CAMERA;
+import static android.os.Environment.getExternalStoragePublicDirectory;
+
 public class HomePageFragment extends Fragment {
 
     ImageView imageView;
     private static final String IMAGE_DIRECTORY = "/PhotoCaptureApp";
-
-
+    private String pictureImagePath = "";
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -50,11 +60,37 @@ public class HomePageFragment extends Fragment {
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, CAMERA);
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String imageFileName = timeStamp + ".jpg";
+                File storageDir = Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_PICTURES);
+                pictureImagePath = storageDir.getAbsolutePath() + "/" + imageFileName;
+                File file = new File(pictureImagePath);
+                Uri outputFileUri = FileProvider.getUriForFile(getActivity(), "com.sayantanbanerjee.photocaptureapp.fileprovider", file);
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+                cameraIntent.putExtra("return-data", true);
+                startActivityForResult(cameraIntent, 1);
             }
         });
         return view;
+    }
+
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                File imgFile = new File(pictureImagePath);
+                if (imgFile.exists()) {
+                    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                    imageView.setImageBitmap(myBitmap);
+                    saveImage(myBitmap);
+                }
+            }
+        }
     }
 
     public String saveImage(Bitmap myBitmap) {
@@ -83,17 +119,6 @@ public class HomePageFragment extends Fragment {
             e1.printStackTrace();
         }
         return "";
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAMERA) {
-            Bitmap currentImage = (Bitmap) data.getExtras().get("data");
-            imageView.setImageBitmap(currentImage);
-            saveImage(currentImage);
-            Toast.makeText(getActivity(), "Image Saved!", Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override
