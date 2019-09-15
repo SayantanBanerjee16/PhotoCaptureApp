@@ -1,11 +1,17 @@
 package com.sayantanbanerjee.photocaptureapp.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.sayantanbanerjee.photocaptureapp.AndroidCustomAdapter;
+import com.sayantanbanerjee.photocaptureapp.PicActivity;
 import com.sayantanbanerjee.photocaptureapp.R;
 
 import java.io.File;
@@ -46,6 +53,8 @@ public class AllPhotosFragment extends Fragment {
         progressBar = (ProgressBar) view.findViewById(R.id.loading_view3);
         listView = (ListView) view.findViewById(R.id.listview_photos);
         return view;
+
+
     }
 
     @Override
@@ -74,6 +83,21 @@ public class AllPhotosFragment extends Fragment {
         } else {
             emptyview.setVisibility(View.VISIBLE);
         }
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String currentPhoto = list.get(i);
+                String path = Environment.getExternalStorageDirectory() + IMAGE_DIRECTORY + "/" + currentPhoto;
+                File directory = new File(path);
+                if(directory.exists()){
+                    Intent intent = new Intent(getActivity(), PicActivity.class);
+                    intent.putExtra("path",path);
+                    startActivity(intent);
+                }
+            }
+        });
+
+
     }
 
     private class DownloadTask extends AsyncTask<String, Integer, String> {
@@ -98,6 +122,7 @@ public class AllPhotosFragment extends Fragment {
             progressBar.setVisibility(View.INVISIBLE);
             listView.setVisibility(View.VISIBLE);
             listView.setAdapter(customAdapter);
+
         }
         
     }
