@@ -12,9 +12,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:padding="16dp"
+        android:id="@+id/Dev"
         android:text=" DEVELOPED BY:"
         android:textAlignment="center"
-        android:textSize="22sp"
+        android:textSize="22dp"
         android:textStyle="bold"
         android:textColor="#5507C0"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -28,17 +29,18 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:padding="16dp"
+        android:id="@+id/saya"
         android:text="SAYANTAN BANERJEE"
         android:textAlignment="center"
-        android:textSize="24sp"
+        android:textSize="24dp"
         android:textStyle="bold"
         android:textColor="#3F058D"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/Dev"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintVertical_bias="1.25" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,15 +48,15 @@
         android:padding="16dp"
         android:text="(Trial app for Cvision.ai)"
         android:textAlignment="center"
-        android:textSize="26sp"
+        android:textSize="26dp"
         android:textStyle="bold"
         android:textColor="#1B013F"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/saya"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.57" />
+        app:layout_constraintVertical_bias="1.25" />
 
 
 

@@ -35,7 +35,7 @@
         android:padding="16dp"
         android:text="Click on the CAPTURE PHOTO button to capture Image. \n\nThe recent captured photo gets displayed here."
         android:textAlignment="center"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="#6811E0"
         app:layout_constraintBottom_toBottomOf="parent"
