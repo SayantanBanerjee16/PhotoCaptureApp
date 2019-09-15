@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/list_item_icon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"/>
+        android:layout_width="60dp"
+        android:layout_height="60dp"/>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -23,17 +23,26 @@
         <TextView
             android:id="@+id/photo_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="AAAAAAAAAAAAAAAAAAAAA"
+            android:textSize="15dp"
+            android:textColor="#071397"/>
 
         <TextView
             android:id="@+id/photo_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="AAAAAAAAAAAAAAAAAAAAA"
+            android:textSize="12dp"
+            android:textColor="#8B0B29"/>
 
         <TextView
             android:id="@+id/photo_time"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"   />
+            android:layout_height="wrap_content"
+            android:text="AAAAAAAAAAAAAAAAAAAAA"
+            android:textSize="12dp"
+            android:textColor="#CE0E52"/>
 
     </LinearLayout>
 
