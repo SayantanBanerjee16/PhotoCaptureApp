@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -31,6 +33,7 @@ import com.sayantanbanerjee.photocaptureapp.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -84,10 +87,46 @@ public class HomePageFragment extends Fragment {
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 File imgFile = new File(pictureImagePath);
+                Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                try{
+                ExifInterface exif = new ExifInterface(imgFile.getPath());
+                int orientation = exif.getAttributeInt(
+                        ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.ORIENTATION_NORMAL);
+
+                int angle = 0;
+
+                if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
+                    angle = 90;
+                } else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
+                    angle = 180;
+                } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                    angle = 270;
+                }
+
+                Matrix mat = new Matrix();
+                mat.postRotate(angle);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 2;
+
+                Bitmap bmp = BitmapFactory.decodeStream(new FileInputStream(imgFile),
+                        null, options);
+                bitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(),
+                        bmp.getHeight(), mat, true);
+                ByteArrayOutputStream outstudentstreamOutputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100,
+                        outstudentstreamOutputStream);
+                imageView.setImageBitmap(bitmap);
+
+            } catch (IOException e) {
+                Log.w("TAG", "-- Error in setting image");
+            } catch (OutOfMemoryError oom) {
+                Log.w("TAG", "-- OOM Error in setting image");
+            }
                 if (imgFile.exists()) {
-                    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                    imageView.setImageBitmap(myBitmap);
-                    saveImage(myBitmap);
+
+                    imageView.setImageBitmap(bitmap);
+                    saveImage(bitmap);
                 }
             }
         }
