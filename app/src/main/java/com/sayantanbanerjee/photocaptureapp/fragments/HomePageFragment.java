@@ -11,6 +11,7 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,6 +32,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
+import com.sayantanbanerjee.photocaptureapp.AndroidCustomAdapter;
 import com.sayantanbanerjee.photocaptureapp.MainActivity;
 import com.sayantanbanerjee.photocaptureapp.R;
 
@@ -95,50 +97,73 @@ public class HomePageFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
-                File imgFile = new File(pictureImagePath);
-                Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                try {
-                    ExifInterface exif = new ExifInterface(imgFile.getPath());
-                    int orientation = exif.getAttributeInt(
-                            ExifInterface.TAG_ORIENTATION,
-                            ExifInterface.ORIENTATION_NORMAL);
-
-                    int angle = 0;
-
-                    if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
-                        angle = 90;
-                    } else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
-                        angle = 180;
-                    } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
-                        angle = 270;
-                    }
-
-                    Matrix mat = new Matrix();
-                    mat.postRotate(angle);
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inSampleSize = 2;
-
-                    Bitmap bmp = BitmapFactory.decodeStream(new FileInputStream(imgFile),
-                            null, options);
-                    bitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(),
-                            bmp.getHeight(), mat, true);
-                    ByteArrayOutputStream outstudentstreamOutputStream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100,
-                            outstudentstreamOutputStream);
-                    imageView.setImageBitmap(bitmap);
-
-                } catch (IOException e) {
-                    Log.w("TAG", "-- Error in setting image");
-                } catch (OutOfMemoryError oom) {
-                    Log.w("TAG", "-- OOM Error in setting image");
-                }
-                if (imgFile.exists()) {
-
-                    imageView.setImageBitmap(bitmap);
-                    saveImage(bitmap);
-                }
+                DownloadTask task = new DownloadTask();
+                task.execute();
             }
         }
+    }
+
+    private class DownloadTask extends AsyncTask<String, Integer, Bitmap> {
+        File imgFile;
+
+        @Override
+        protected Bitmap doInBackground(String... args) {
+            imgFile = new File(pictureImagePath);
+            Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            try {
+                ExifInterface exif = new ExifInterface(imgFile.getPath());
+                int orientation = exif.getAttributeInt(
+                        ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.ORIENTATION_NORMAL);
+
+                int angle = 0;
+
+                if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
+                    angle = 90;
+                } else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
+                    angle = 180;
+                } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                    angle = 270;
+                }
+
+                Matrix mat = new Matrix();
+                mat.postRotate(angle);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 2;
+
+                Bitmap bmp = BitmapFactory.decodeStream(new FileInputStream(imgFile),
+                        null, options);
+                bitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(),
+                        bmp.getHeight(), mat, true);
+                ByteArrayOutputStream outstudentstreamOutputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100,
+                        outstudentstreamOutputStream);
+
+
+            } catch (IOException e) {
+                Log.w("TAG", "-- Error in setting image");
+            } catch (OutOfMemoryError oom) {
+                Log.w("TAG", "-- OOM Error in setting image");
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            if (imgFile.exists()) {
+
+                imageView.setImageBitmap(bitmap);
+                saveImage(bitmap);
+            }
+
+        }
+
     }
 
     public String saveImage(Bitmap myBitmap) {
