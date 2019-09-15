@@ -2,6 +2,9 @@ package com.sayantanbanerjee.photocaptureapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,16 +12,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class AndroidCustomAdapter extends ArrayAdapter {
 
-    int MONTH_CURRENT;
-    int DAY_CURRENT;
-    int YEAR_CURRENT;
-    int HOUR_CURRENT;
-    int MINUTE_CURRENT;
-    int SECOND_CURRENT;
+    private int  MONTH_CURRENT;
+    private int DAY_CURRENT;
+    private int YEAR_CURRENT;
+    private int HOUR_CURRENT;
+    private int MINUTE_CURRENT;
+    private int SECOND_CURRENT;
+    private static final String IMAGE_DIRECTORY = "/PhotoCaptureApp";
 
     public AndroidCustomAdapter(Activity context, ArrayList<String> list) {
         super(context, 0,list);
@@ -88,6 +93,20 @@ public class AndroidCustomAdapter extends ArrayAdapter {
         dateTextView.setText("DATE : " + date);
         TextView timeTextView = (TextView) listItemView.findViewById(R.id.photo_time);
         timeTextView.setText("TIME : " + time);
+        try {
+            ImageView smallImage = (ImageView) listItemView.findViewById(R.id.list_item_icon);
+            String path = Environment.getExternalStorageDirectory() + IMAGE_DIRECTORY + "/" + currentPhoto;
+            File directory = new File(path);
+            if(directory.exists()){
+                Bitmap bitmap = BitmapFactory.decodeFile(directory.getAbsolutePath());
+                smallImage.setImageBitmap(bitmap);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+
         return listItemView;
     }
 }
