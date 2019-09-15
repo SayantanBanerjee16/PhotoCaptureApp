@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class AndroidCustomAdapter extends ArrayAdapter {
 
-    private int  MONTH_CURRENT;
+    private int MONTH_CURRENT;
     private int DAY_CURRENT;
     private int YEAR_CURRENT;
     private int HOUR_CURRENT;
@@ -57,17 +57,27 @@ public class AndroidCustomAdapter extends ArrayAdapter {
         String second_string1 = Character.toString(currentPhoto.charAt(17)) + Character.toString(currentPhoto.charAt(18));
         SECOND_CURRENT = Integer.parseInt(second_string1);
 
+        String minute;
+
+        if(MINUTE_CURRENT == 0){
+            minute = "00";
+        }else if(MINUTE_CURRENT < 10){
+            minute = "0" + MINUTE_CURRENT;
+        }else {
+            minute = Integer.toString(MINUTE_CURRENT);
+        }
+
         String time,date;
         if (HOUR_CURRENT == 0) {
-            time = Integer.toString(12) + " : " + Integer.toString(MINUTE_CURRENT)  + " AM";
+            time = Integer.toString(12) + " : " + minute  + " AM";
         } else if (HOUR_CURRENT < 12 && HOUR_CURRENT > 0) {
-            time = Integer.toString(HOUR_CURRENT) + " : " + Integer.toString(MINUTE_CURRENT)  + " AM";
+            time = Integer.toString(HOUR_CURRENT) + " : " + minute  + " AM";
         } else if (HOUR_CURRENT == 12)
         {
-            time = Integer.toString(HOUR_CURRENT) + " : " + Integer.toString(MINUTE_CURRENT) + " PM";
+            time = Integer.toString(HOUR_CURRENT) + " : " + minute + " PM";
         } else
         {
-            time = Integer.toString(HOUR_CURRENT - 12) + " : " + Integer.toString(MINUTE_CURRENT) + " PM";
+            time = Integer.toString(HOUR_CURRENT - 12) + " : " + minute + " PM";
         }
 
         ArrayList<String> list = new ArrayList<String>();
