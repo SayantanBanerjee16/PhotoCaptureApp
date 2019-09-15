@@ -63,17 +63,28 @@ public class AllPhotosFragment extends Fragment {
         loading.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.INVISIBLE);
         list = new ArrayList<String>();
+        int cnt = 0;
         String path = Environment.getExternalStorageDirectory() + IMAGE_DIRECTORY;
         File directory = new File(path);
         if (directory.exists()) {
             File[] files = directory.listFiles();
-            if (files.length == 0) {
+            for (int i = 0; i < files.length; i++) {
+                String file_name = files[i].getName();
+                String extension = file_name.substring(file_name.lastIndexOf("."));
+                if(!(extension.equals(".jpg"))){
+                   cnt++;
+                }
+            }
+            if ((files.length - cnt) == 0) {
                 emptyview.setVisibility(View.VISIBLE);
             } else {
                 emptyview.setVisibility(View.INVISIBLE);
                 for (int i = 0; i < files.length; i++) {
                     String file_name = files[i].getName();
-                    list.add(file_name);
+                    String extension = file_name.substring(file_name.lastIndexOf("."));
+                    if(extension.equals(".jpg")){
+                        list.add(file_name);
+                    }
                 }
                 Collections.reverse(list);
                 DownloadTask task = new DownloadTask();
