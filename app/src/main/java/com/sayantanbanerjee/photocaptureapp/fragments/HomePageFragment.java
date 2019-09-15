@@ -82,17 +82,19 @@ public class HomePageFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String imageFileName = timeStamp + ".jpg";
-                File storageDir = Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_PICTURES);
-                pictureImagePath = storageDir.getAbsolutePath() + "/" + imageFileName;
-                File file = new File(pictureImagePath);
-                Uri outputFileUri = FileProvider.getUriForFile(getActivity(), "com.sayantanbanerjee.photocaptureapp.fileprovider", file);
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-                cameraIntent.putExtra("return-data", true);
-                startActivityForResult(cameraIntent, 1);
+                if(sharedPreferences.getInt("progress", -1) == 0){
+                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                    String imageFileName = timeStamp + ".jpg";
+                    File storageDir = Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_PICTURES);
+                    pictureImagePath = storageDir.getAbsolutePath() + "/" + imageFileName;
+                    File file = new File(pictureImagePath);
+                    Uri outputFileUri = FileProvider.getUriForFile(getActivity(), "com.sayantanbanerjee.photocaptureapp.fileprovider", file);
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+                    cameraIntent.putExtra("return-data", true);
+                    startActivityForResult(cameraIntent, 1);
+                }
             }
         });
         return view;
@@ -107,6 +109,11 @@ public class HomePageFragment extends Fragment {
                 textDisp.setVisibility(View.INVISIBLE);
                 textView2.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.VISIBLE);
+                imageView.setVisibility(View.INVISIBLE);
+                int val = sharedPreferences.getInt("firstTime", 0);
+                sharedPreferences.edit().putInt("firstTime", val + 1).apply();
+                textView.setText("No of PICTURES total captured by this App are: " + Integer.toString(val - 1));
+                sharedPreferences.edit().putInt("progress", 1).apply();
                 DownloadTask task = new DownloadTask();
                 task.execute();
             }
@@ -166,8 +173,10 @@ public class HomePageFragment extends Fragment {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
+            sharedPreferences.edit().putInt("progress", 0).apply();
             textView2.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.INVISIBLE);
+            imageView.setVisibility(View.VISIBLE);
             if (imgFile.exists()) {
                 imageView.setImageBitmap(bitmap);
                 saveImage(bitmap);
@@ -189,8 +198,6 @@ public class HomePageFragment extends Fragment {
         // Calendar.getInstance().getTimeInMillis()
 
         try {
-            int val = sharedPreferences.getInt("firstTime", 0);
-            sharedPreferences.edit().putInt("firstTime", val + 1).apply();
             Date dateObject = new Date();
             SimpleDateFormat dateFormatter = new SimpleDateFormat("YYYYMMdd_HHmmss");
             String date = dateFormatter.format(dateObject);
@@ -202,8 +209,8 @@ public class HomePageFragment extends Fragment {
                     new String[]{f.getPath()},
                     new String[]{"image/jpeg"}, null);
             fo.close();
+            Toast.makeText(getActivity(),"Image Saved!",Toast.LENGTH_SHORT).show();
             Log.d("TAG", "File Saved::---&gt;" + f.getAbsolutePath());
-            textView.setText("No of PICTURES total captured by this App are: " + Integer.toString(val - 1));
             return f.getAbsolutePath();
         } catch (IOException e1) {
             e1.printStackTrace();
