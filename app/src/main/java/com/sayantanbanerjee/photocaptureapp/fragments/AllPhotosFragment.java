@@ -69,6 +69,7 @@ public class AllPhotosFragment extends Fragment {
                 Collections.reverse(list);
                 DownloadTask task = new DownloadTask();
                 task.execute();
+                function();
             }
         } else {
             emptyview.setVisibility(View.VISIBLE);
@@ -78,7 +79,6 @@ public class AllPhotosFragment extends Fragment {
     private class DownloadTask extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... args) {
-            function();
             customAdapter = new AndroidCustomAdapter(getActivity(), list);
             return "";
         }
