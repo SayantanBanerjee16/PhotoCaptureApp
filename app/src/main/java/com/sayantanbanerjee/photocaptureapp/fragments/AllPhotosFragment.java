@@ -21,11 +21,14 @@ import java.util.Collections;
 public class AllPhotosFragment extends Fragment {
 
     ListView listView;
+    View emptyview;
     private static final String IMAGE_DIRECTORY = "/PhotoCaptureApp";
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_allphotos,container,false);
+        View view = inflater.inflate(R.layout.fragment_allphotos, container, false);
+        emptyview = (View) view.findViewById(R.id.empty_view);
         listView = (ListView) view.findViewById(R.id.listview_photos);
         return view;
     }
@@ -37,15 +40,23 @@ public class AllPhotosFragment extends Fragment {
         String path = Environment.getExternalStorageDirectory() + IMAGE_DIRECTORY;
 
         File directory = new File(path);
-        File[] files = directory.listFiles();
+        if (directory.exists()) {
+            File[] files = directory.listFiles();
 
-        for (int i = 0; i < files.length; i++)
-        {
-            String file_name = files[i].getName();
-            list.add(file_name);
+            if (files.length == 0) {
+                emptyview.setVisibility(View.VISIBLE);
+            } else {
+                emptyview.setVisibility(View.INVISIBLE);
+                for (int i = 0; i < files.length; i++) {
+                    String file_name = files[i].getName();
+                    list.add(file_name);
+                }
+                Collections.reverse(list);
+                AndroidCustomAdapter customAdapter = new AndroidCustomAdapter(getActivity(), list);
+                listView.setAdapter(customAdapter);
+            }
+        } else {
+            emptyview.setVisibility(View.VISIBLE);
         }
-        Collections.reverse(list);
-        AndroidCustomAdapter customAdapter = new AndroidCustomAdapter(getActivity(), list);
-        listView.setAdapter(customAdapter);
     }
 }
