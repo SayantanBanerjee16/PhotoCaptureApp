@@ -54,6 +54,7 @@ public class HomePageFragment extends Fragment {
 
     ImageView imageView;
     TextView textView;
+    TextView textDisp;
     private static final String IMAGE_DIRECTORY = "/PhotoCaptureApp";
     private String pictureImagePath = "";
 
@@ -68,6 +69,7 @@ public class HomePageFragment extends Fragment {
         Button button = (Button) view.findViewById(R.id.captureButton);
         imageView = view.findViewById(R.id.photoPlaceholder);
         textView = view.findViewById(R.id.footer);
+        textDisp = view.findViewById(R.id.disp);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,7 +164,7 @@ public class HomePageFragment extends Fragment {
             fo.close();
             Log.d("TAG", "File Saved::---&gt;" + f.getAbsolutePath());
             textView.setText("No of PICTURES total captured by this App are: " + Integer.toString(val - 1));
-
+            textDisp.setVisibility(View.INVISIBLE);
             return f.getAbsolutePath();
         } catch (IOException e1) {
             e1.printStackTrace();
@@ -190,6 +192,12 @@ public class HomePageFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        textDisp.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         textView.setAlpha(0);
@@ -210,6 +218,7 @@ public class HomePageFragment extends Fragment {
         if (firstTime2 == 0) {
             sharedPreferences.edit().putInt("firstTime", 1).apply();
         }
+
         textView.setAlpha(1);
         if (firstTime2 == 0) {
             textView.setText("No of PICTURES total captured by this App are: " + 0);
