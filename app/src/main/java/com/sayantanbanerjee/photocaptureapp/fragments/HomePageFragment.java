@@ -154,7 +154,10 @@ public class HomePageFragment extends Fragment {
         try {
             int val = sharedPreferences.getInt("firstTime", 0);
             sharedPreferences.edit().putInt("firstTime", val + 1).apply();
-            File f = new File(wallpaperDirectory, "IMG" + val + ".jpg");
+            Date dateObject = new Date();
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("YYYYddMM_HHmmss");
+            String date = dateFormatter.format(dateObject);
+            File f = new File(wallpaperDirectory, "IMG_" + date + ".jpg");
             f.createNewFile();
             FileOutputStream fo = new FileOutputStream(f);
             fo.write(bytes.toByteArray());
