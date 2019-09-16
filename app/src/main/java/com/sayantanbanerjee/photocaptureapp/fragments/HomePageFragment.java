@@ -83,17 +83,26 @@ public class HomePageFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(sharedPreferences.getInt("progress", -1) == 0){
-                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                    String imageFileName = timeStamp + ".jpg";
-                    File storageDir = Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_PICTURES);
-                    pictureImagePath = storageDir.getAbsolutePath() + "/" + imageFileName;
-                    File file = new File(pictureImagePath);
-                    Uri outputFileUri = FileProvider.getUriForFile(getActivity(), "com.sayantanbanerjee.photocaptureapp.fileprovider", file);
-                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-                    cameraIntent.putExtra("return-data", true);
-                    startActivityForResult(cameraIntent, 1);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if ((ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) || (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) || (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)) {
+                            String[] permission = {Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                            ActivityCompat.requestPermissions(getActivity(), permission, 1);
+                        }else{
+                            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                            String imageFileName = timeStamp + ".jpg";
+                            File storageDir = Environment.getExternalStoragePublicDirectory(
+                                    Environment.DIRECTORY_PICTURES);
+                            pictureImagePath = storageDir.getAbsolutePath() + "/" + imageFileName;
+                            File file = new File(pictureImagePath);
+                            Uri outputFileUri = FileProvider.getUriForFile(getActivity(), "com.sayantanbanerjee.photocaptureapp.fileprovider", file);
+                            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+                            cameraIntent.putExtra("return-data", true);
+                            startActivityForResult(cameraIntent, 1);
+                        }
+                    }
+
                 }
             }
         });
